@@ -17,7 +17,7 @@ public class Generator : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(Create());
+        StartCoroutine(CreateResource());
     }
 
     private void Awake()
@@ -36,7 +36,7 @@ public class Generator : MonoBehaviour
         return point;
     }
 
-    private IEnumerator Create()
+    private IEnumerator CreateResource()
     {
         WaitForSeconds delay = new WaitForSeconds(_delay);
 

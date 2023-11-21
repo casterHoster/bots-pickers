@@ -1,20 +1,62 @@
+using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
-public class Base : MonoBehaviour
+public class Base : MonoBehaviour, IPointerClickHandler
 {
     public event UnityAction NewCoordinateIsAdded;
 
     [SerializeField] private Generator _generator;
+    [SerializeField] private Unit _unit;
+    [SerializeField] private Plane _plane;
 
-    private int _resourseCount = 0;
+    private int _resourceCountForCreateUnit = 3;
+    private bool _canBuildNewBuilding = false;
+    private bool _isUnitAtFlag = false;
+
+    public Base NewBase = null;
+
+    public int ResourceCountForCreateBuilding { get; private set; }
+
+    public int ResourseCount { get; private set; }
+
+    public bool FlagIsCreated { get; private set; }
+
+    public bool IsChose { get; private set; }
+
+    public bool HasBuilder { get; private set; }
+
+    public bool IsBuildNewBase { get; private set; }
 
     public List<Resource> Resources = new List<Resource>();
+
+    private void Start()
+    {
+        ResourseCount = 0;
+        ResourceCountForCreateBuilding = 5;
+        StartCoroutine(Create());
+    }
 
     private void Awake()
     {
         _generator.ResourceIsAppeared += AddResourceCoordinate;
+        _plane.FlagIsCreated += SetStatusFlagCreated;
+    }
+
+    private void Update()
+    {
+        if (IsChose && FlagIsCreated)
+        {
+            _canBuildNewBuilding = true;
+        }
+
+        if (_plane.CurrentFlag != null)
+        {
+            _plane.CurrentFlag.UnitOnPointAndCanBuild += SetStatusIsUnitAtFlag;
+        }
     }
 
     private void AddResourceCoordinate()
@@ -30,6 +72,19 @@ public class Base : MonoBehaviour
         return resource;
     }
 
+    public Transform GetFlagOfBuildNewBaseTransform()
+    {
+        if (_plane.CurrentFlag != null)
+        {
+            return _plane.CurrentFlag.transform;
+        } 
+        
+        else 
+        {
+            return null; 
+        }
+    }
+
     private void DeleteFirstReceivedResource()
     {
         Resources.RemoveAt(0);
@@ -37,10 +92,69 @@ public class Base : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.collider.TryGetComponent<Resource> (out Resource resource))
+        if (collision.collider.TryGetComponent<Resource>(out Resource resource) && resource.isDelivered)
         {
-            _resourseCount++;
-            Debug.Log("Общее количество ресурсов: " + _resourseCount);
+            ResourseCount++;
+            Debug.Log("Общее количество ресурсов: " + ResourseCount);
         }
+    }
+
+    private IEnumerator Create()
+    {
+        while (true)
+        {
+            if (_canBuildNewBuilding && ResourseCount >= ResourceCountForCreateBuilding && _isUnitAtFlag == true)
+            {
+                NewBase = Instantiate(this, _plane.CurrentFlag.transform.position, UnityEngine.Quaternion.identity);
+                FlagIsCreated = false;
+                IsChose = false;
+                _plane.CurrentFlag.Destroy();
+                _canBuildNewBuilding = false;
+                ResourseCount -= ResourceCountForCreateBuilding;
+                IsBuildNewBase = true;
+            }
+
+            if (ResourseCount >= _resourceCountForCreateUnit && _canBuildNewBuilding == false)
+            {
+                Unit unit = Instantiate(_unit, transform.position, UnityEngine.Quaternion.identity);
+                unit.SetBase(this);
+                ResourseCount -= _resourceCountForCreateUnit;
+            }
+
+            yield return null;
+        }
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        IsChose = true;
+    }
+
+    private void SetStatusIsUnitAtFlag()
+    {
+        _isUnitAtFlag = true;
+    }
+
+    private void SetStatusFlagCreated()
+    {
+        if (IsChose)
+        {
+            FlagIsCreated = true;
+        }
+    }
+
+    public void SetStatusBuilderIsTrue()
+    {
+        HasBuilder = true;
+    }
+
+    public Base GetNewBase()
+    {
+        return NewBase;
+    }
+
+    public void SetStatusIsBuildNewBaseFalse()
+    {
+        IsBuildNewBase = false;
     }
 }

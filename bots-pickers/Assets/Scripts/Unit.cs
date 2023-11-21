@@ -2,11 +2,13 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    [SerializeField] private Base _base;
+    [SerializeField] public Base _base;
     [SerializeField] private float _speed;
 
     private bool _isFree = true;
     private Resource _resourceOnScene;
+
+    public bool IsBuilder {  get; private set; }
 
     public Transform Target { get; private set; }
 
@@ -27,6 +29,23 @@ public class Unit : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, Target.position, _speed * Time.deltaTime);
         }
 
+        if (_base.GetFlagOfBuildNewBaseTransform()  != null && _isFree == true && _base.HasBuilder == false && _base.FlagIsCreated == true && _base.ResourseCount >= _base.ResourceCountForCreateBuilding)
+        {
+            _base.SetStatusBuilderIsTrue();
+            _isFree = false;
+            Target = _base.GetFlagOfBuildNewBaseTransform();
+            IsBuilder = true;
+        }
+
+        if (_base.IsBuildNewBase && IsBuilder == true)
+        {
+            SetBase(_base.NewBase);
+            _base.SetStatusIsBuildNewBaseFalse();
+            IsBuilder = false;
+            Target = null;
+            _isFree = true;
+        }
+
         if (_base.Resources.Count > 0 && _isFree == true) 
         {
             _isFree = false;
@@ -40,5 +59,15 @@ public class Unit : MonoBehaviour
     private void SetFree()
     {
         _isFree = true;
+    }
+
+    public Base GetBase() 
+    { 
+        return _base; 
+    }
+
+    public void SetBase(Base newBase)
+    {
+        _base = newBase;
     }
 }
