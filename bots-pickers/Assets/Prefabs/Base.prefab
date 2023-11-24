@@ -46,10 +46,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _generator: {fileID: 0}
-  _unitSample: {fileID: 2644125746444079881, guid: 1800aad262d1338459b1d7cf233e7fd6, type: 3}
+  _unit: {fileID: 0}
   _plane: {fileID: 0}
-  _units: []
-  NewBase: {fileID: 0}
   Resources: []
 --- !u!65 &8144837438943622210
 BoxCollider:

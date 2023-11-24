@@ -5,9 +5,8 @@ public class Unit : MonoBehaviour
     [SerializeField] public Base _base;
     [SerializeField] private float _speed;
 
+    private bool _isFree = true;
     private Resource _resourceOnScene;
-
-    public bool IsFree { get; private set; }
 
     public bool IsBuilder {  get; private set; }
 
@@ -15,8 +14,7 @@ public class Unit : MonoBehaviour
 
     private void Awake()
     {
-        _base.ResourceIsGot += GetTarget;
-        IsFree = true;
+        _base.NewCoordinateIsAdded += Update;
     }
 
     private void ChooseTargetBase()
@@ -31,10 +29,10 @@ public class Unit : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, Target.position, _speed * Time.deltaTime);
         }
 
-        if (_base.GetFlagOfBuildNewBaseTransform()  != null && IsFree == true && _base.HasBuilder == false && _base.FlagIsCreated == true && _base.ResourseCount >= _base.ResourceCountForCreateBuilding)
+        if (_base.GetFlagOfBuildNewBaseTransform()  != null && _isFree == true && _base.HasBuilder == false && _base.FlagIsCreated == true && _base.ResourseCount >= _base.ResourceCountForCreateBuilding)
         {
-            _base.SetStatusHasBuilderIsTrue();
-            IsFree = false;
+            _base.SetStatusBuilderIsTrue();
+            _isFree = false;
             Target = _base.GetFlagOfBuildNewBaseTransform();
             IsBuilder = true;
         }
@@ -45,18 +43,14 @@ public class Unit : MonoBehaviour
             _base.SetStatusIsBuildNewBaseFalse();
             IsBuilder = false;
             Target = null;
-            IsFree = true;
+            _isFree = true;
         }
-    }
 
-    private void GetTarget()
-    {
-        if (IsFree)
+        if (_base.Resources.Count > 0 && _isFree == true) 
         {
-            IsFree = false;
-            _resourceOnScene = _base.CurrentResourceToCollect;
+            _isFree = false;
+            _resourceOnScene = _base.GetResource();
             Target = _resourceOnScene.transform;
-            _base.SetCurrentResourceToCollectNull();
             _resourceOnScene.Collected += ChooseTargetBase;
             _resourceOnScene.Delivered += SetFree;
         }
@@ -64,7 +58,7 @@ public class Unit : MonoBehaviour
 
     private void SetFree()
     {
-        IsFree = true;
+        _isFree = true;
     }
 
     public Base GetBase() 

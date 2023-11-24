@@ -5,13 +5,15 @@ using UnityEngine.Events;
 
 public class Generator : MonoBehaviour
 {
-    [SerializeField] private List<Transform> _resourcePoints;
-    [SerializeField] private Resource _resourceSample;
-    [SerializeField] private float _delay;
-    [SerializeField] private int _maxCountResourse;
+    public event UnityAction ResourceIsAppeared;
 
-    private int _countResourse;
-    private List<Resource> _resources;
+    [SerializeField] private List<Transform> _resourcePoints;
+    [SerializeField] private Resource _resource;
+    [SerializeField] private float _delay;
+    [SerializeField] private int _maxCountResourseOffScene;
+
+    private int _countResourseOnScene;
+    private Resource _currentResource;
 
     private void Start()
     {
@@ -20,22 +22,12 @@ public class Generator : MonoBehaviour
 
     private void Awake()
     {
-        _resources = new List<Resource>();
-        _countResourse = 0;
+        _countResourseOnScene = 0;
     }
 
-    public Resource GiveFirstListedResource()
+    public Resource GetCurrentResource()
     {
-        if (_resources.Count > 0)
-        {
-            Resource givenResource = _resources[0];
-            _resources.RemoveAt(0);
-            return givenResource;
-        }
-        else
-        {
-        return null;
-        }
+        return _currentResource;
     }
 
     private Transform GetRandomPoint(List<Transform> points)
@@ -50,11 +42,12 @@ public class Generator : MonoBehaviour
 
         while (true)
         {
-            if (_maxCountResourse > _countResourse)
+            if (_maxCountResourseOffScene > _countResourseOnScene)
             {
-                Resource resource = Instantiate(_resourceSample, GetRandomPoint(_resourcePoints).position, Quaternion.identity);
-                _resources.Add(resource);
-                _countResourse++;
+                Resource resource = Instantiate(_resource, GetRandomPoint(_resourcePoints).position, Quaternion.identity);
+                _currentResource = resource;
+                _countResourseOnScene++;
+                ResourceIsAppeared?.Invoke();
             }
                 
             yield return delay;
