@@ -5,15 +5,13 @@ using UnityEngine.Events;
 
 public class Generator : MonoBehaviour
 {
-    public event UnityAction ResourceIsAppeared;
-
     [SerializeField] private List<Transform> _resourcePoints;
-    [SerializeField] private Resource _resource;
+    [SerializeField] private Resource _resourceSample;
     [SerializeField] private float _delay;
-    [SerializeField] private int _maxCountResourseOffScene;
+    [SerializeField] private int _maxCountResourse;
 
-    private int _countResourseOnScene;
-    private Resource _currentResource;
+    private int _countResourse;
+    private List<Resource> _resources;
 
     private void Start()
     {
@@ -22,12 +20,22 @@ public class Generator : MonoBehaviour
 
     private void Awake()
     {
-        _countResourseOnScene = 0;
+        _resources = new List<Resource>();
+        _countResourse = 0;
     }
 
-    public Resource GetCurrentResource()
+    public Resource GiveFirstListedResource()
     {
-        return _currentResource;
+        if (_resources.Count > 0)
+        {
+            Resource givenResource = _resources[0];
+            _resources.RemoveAt(0);
+            return givenResource;
+        }
+        else
+        {
+        return null;
+        }
     }
 
     private Transform GetRandomPoint(List<Transform> points)
@@ -42,12 +50,11 @@ public class Generator : MonoBehaviour
 
         while (true)
         {
-            if (_maxCountResourseOffScene > _countResourseOnScene)
+            if (_maxCountResourse > _countResourse)
             {
-                Resource resource = Instantiate(_resource, GetRandomPoint(_resourcePoints).position, Quaternion.identity);
-                _currentResource = resource;
-                _countResourseOnScene++;
-                ResourceIsAppeared?.Invoke();
+                Resource resource = Instantiate(_resourceSample, GetRandomPoint(_resourcePoints).position, Quaternion.identity);
+                _resources.Add(resource);
+                _countResourse++;
             }
                 
             yield return delay;

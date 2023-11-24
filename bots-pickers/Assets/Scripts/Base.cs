@@ -7,11 +7,12 @@ using UnityEngine.EventSystems;
 
 public class Base : MonoBehaviour, IPointerClickHandler
 {
-    public event UnityAction NewCoordinateIsAdded;
+    public event UnityAction ResourceIsGot;
 
     [SerializeField] private Generator _generator;
-    [SerializeField] private Unit _unit;
+    [SerializeField] private Unit _unitSample;
     [SerializeField] private Plane _plane;
+    [SerializeField] private List<Unit> _units;
 
     private int _resourceCountForCreateUnit = 3;
     private bool _canBuildNewBuilding = false;
@@ -19,22 +20,23 @@ public class Base : MonoBehaviour, IPointerClickHandler
 
     public Base NewBase = null;
 
+    public Resource CurrentResourceToCollect { get; private set; }
+
     public int ResourceCountForCreateBuilding { get; private set; }
 
     public int ResourseCount { get; private set; }
 
     public bool FlagIsCreated { get; private set; }
 
-    public bool IsChose { get; private set; }
+    public bool IsItChose { get; private set; }
 
     public bool HasBuilder { get; private set; }
 
     public bool IsBuildNewBase { get; private set; }
 
-    public List<Resource> Resources = new List<Resource>();
-
     private void Start()
     {
+        CurrentResourceToCollect = null;
         ResourseCount = 0;
         ResourceCountForCreateBuilding = 5;
         StartCoroutine(Create());
@@ -42,13 +44,12 @@ public class Base : MonoBehaviour, IPointerClickHandler
 
     private void Awake()
     {
-        _generator.ResourceIsAppeared += AddResourceCoordinate;
         _plane.FlagIsCreated += SetStatusFlagCreated;
     }
 
     private void Update()
     {
-        if (IsChose && FlagIsCreated)
+        if (IsItChose && FlagIsCreated)
         {
             _canBuildNewBuilding = true;
         }
@@ -57,19 +58,23 @@ public class Base : MonoBehaviour, IPointerClickHandler
         {
             _plane.CurrentFlag.UnitOnPointAndCanBuild += SetStatusIsUnitAtFlag;
         }
+
+        foreach (Unit unit in _units)
+        {
+            if (unit.IsFree)
+            {
+                GetResource();
+                ResourceIsGot?.Invoke();
+            }
+        }
     }
 
-    private void AddResourceCoordinate()
+    private void GetResource()
     {
-        Resources.Add(_generator.GetCurrentResource());
-        NewCoordinateIsAdded?.Invoke();
-    }
-
-    public Resource GetResource()
-    {
-        Resource resource = Resources[0];
-        DeleteFirstReceivedResource();
-        return resource;
+        if (CurrentResourceToCollect == null && _generator.GiveFirstListedResource() != null)
+        {
+            CurrentResourceToCollect = _generator.GiveFirstListedResource();
+        }
     }
 
     public Transform GetFlagOfBuildNewBaseTransform()
@@ -77,17 +82,12 @@ public class Base : MonoBehaviour, IPointerClickHandler
         if (_plane.CurrentFlag != null)
         {
             return _plane.CurrentFlag.transform;
-        } 
-        
-        else 
-        {
-            return null; 
         }
-    }
 
-    private void DeleteFirstReceivedResource()
-    {
-        Resources.RemoveAt(0);
+        else
+        {
+            return null;
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -107,7 +107,7 @@ public class Base : MonoBehaviour, IPointerClickHandler
             {
                 NewBase = Instantiate(this, _plane.CurrentFlag.transform.position, UnityEngine.Quaternion.identity);
                 FlagIsCreated = false;
-                IsChose = false;
+                IsItChose = false;
                 _plane.CurrentFlag.Destroy();
                 _canBuildNewBuilding = false;
                 ResourseCount -= ResourceCountForCreateBuilding;
@@ -116,7 +116,7 @@ public class Base : MonoBehaviour, IPointerClickHandler
 
             if (ResourseCount >= _resourceCountForCreateUnit && _canBuildNewBuilding == false)
             {
-                Unit unit = Instantiate(_unit, transform.position, UnityEngine.Quaternion.identity);
+                Unit unit = Instantiate(_unitSample, transform.position, UnityEngine.Quaternion.identity);
                 unit.SetBase(this);
                 ResourseCount -= _resourceCountForCreateUnit;
             }
@@ -127,7 +127,7 @@ public class Base : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        IsChose = true;
+        IsItChose = true;
     }
 
     private void SetStatusIsUnitAtFlag()
@@ -137,13 +137,13 @@ public class Base : MonoBehaviour, IPointerClickHandler
 
     private void SetStatusFlagCreated()
     {
-        if (IsChose)
+        if (IsItChose)
         {
             FlagIsCreated = true;
         }
     }
 
-    public void SetStatusBuilderIsTrue()
+    public void SetStatusHasBuilderIsTrue()
     {
         HasBuilder = true;
     }
@@ -156,5 +156,10 @@ public class Base : MonoBehaviour, IPointerClickHandler
     public void SetStatusIsBuildNewBaseFalse()
     {
         IsBuildNewBase = false;
+    }
+
+    public void SetCurrentResourceToCollectNull()
+    {
+        CurrentResourceToCollect = null;
     }
 }

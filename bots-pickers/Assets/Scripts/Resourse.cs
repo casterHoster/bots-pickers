@@ -6,7 +6,7 @@ public class Resource : MonoBehaviour
     public event UnityAction Collected;
     public event UnityAction Delivered;
     private bool _isRaised = false;
-    private Unit _unit;
+    private Unit _ownerUnit;
 
     public bool isDelivered { get; private set;}
 
@@ -17,13 +17,13 @@ public class Resource : MonoBehaviour
             transform.position.Set(unit.transform.position.x, unit.transform.position.y, unit.transform.position.z);
             transform.parent = unit.transform;
             _isRaised = true;
-            _unit = unit;
+            _ownerUnit = unit;
             Collected?.Invoke();
         }
 
         if (collision.collider.TryGetComponent<Base>(out Base theBase))
         {
-            if (_unit.GetBase().transform.Equals(theBase.transform))
+            if (_ownerUnit.GetBase().transform.Equals(theBase.transform))
             {
                 isDelivered = true;
                 Destroy(gameObject);
