@@ -5,6 +5,8 @@ using UnityEngine.Events;
 
 public class Generator : MonoBehaviour
 {
+    public event UnityAction ResourceIsAppeared;
+
     [SerializeField] private List<Transform> _resourcePoints;
     [SerializeField] private Resource _resource;
     [SerializeField] private float _delay;
@@ -12,8 +14,6 @@ public class Generator : MonoBehaviour
 
     private int _countResourseOnScene;
     private Resource _currentResource;
-
-    public event UnityAction ResourceIsAppeared;
 
     private void Start()
     {
@@ -49,7 +49,7 @@ public class Generator : MonoBehaviour
                 _countResourseOnScene++;
                 ResourceIsAppeared?.Invoke();
             }
-
+                
             yield return delay;
         }
     }
