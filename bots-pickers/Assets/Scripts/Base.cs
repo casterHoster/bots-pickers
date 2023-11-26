@@ -1,23 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Numerics;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 public class Base : MonoBehaviour, IPointerClickHandler
 {
-    public event UnityAction NewCoordinateIsAdded;
-
     [SerializeField] private Generator _generator;
     [SerializeField] private Unit _unit;
     [SerializeField] private Plane _plane;
 
+    public Base NewBase = null;
     private int _resourceCountForCreateUnit = 3;
     private bool _canBuildNewBuilding = false;
     private bool _isUnitAtFlag = false;
-
-    public Base NewBase = null;
 
     public int ResourceCountForCreateBuilding { get; private set; }
 
@@ -62,7 +58,6 @@ public class Base : MonoBehaviour, IPointerClickHandler
     private void AddResourceCoordinate()
     {
         Resources.Add(_generator.GetCurrentResource());
-        NewCoordinateIsAdded?.Invoke();
     }
 
     public Resource GetResource()
@@ -77,11 +72,11 @@ public class Base : MonoBehaviour, IPointerClickHandler
         if (_plane.CurrentFlag != null)
         {
             return _plane.CurrentFlag.transform;
-        } 
-        
-        else 
+        }
+
+        else
         {
-            return null; 
+            return null;
         }
     }
 
@@ -95,7 +90,6 @@ public class Base : MonoBehaviour, IPointerClickHandler
         if (collision.collider.TryGetComponent<Resource>(out Resource resource) && resource.isDelivered)
         {
             ResourseCount++;
-            Debug.Log("Общее количество ресурсов: " + ResourseCount);
         }
     }
 

@@ -8,7 +8,7 @@ public class Resource : MonoBehaviour
     private bool _isRaised = false;
     private Unit _unit;
 
-    public bool isDelivered { get; private set;}
+    public bool isDelivered { get; private set; }
 
     private void OnCollisionEnter(Collision collision)
     {
