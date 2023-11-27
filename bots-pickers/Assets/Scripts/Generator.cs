@@ -11,12 +11,11 @@ public class Generator : MonoBehaviour
     [SerializeField] private int _maxCountResourseOffScene;
 
     private int _countResourseOnScene;
-    private Resource _currentResource;
-
-    public event UnityAction ResourceIsAppeared;
+    private List<Resource> resources;
 
     private void Start()
     {
+        resources = new List<Resource>();
         StartCoroutine(CreateResource());
     }
 
@@ -25,9 +24,18 @@ public class Generator : MonoBehaviour
         _countResourseOnScene = 0;
     }
 
-    public Resource GetCurrentResource()
+    public Resource GiveFirstListedResourceAndDeleteItFromList()
     {
-        return _currentResource;
+        if (resources.Count > 0)
+        {
+            Resource resource = resources[0];
+            resources.RemoveAt(0);
+            return resource;
+        } 
+        else
+        {
+            return null;
+        }
     }
 
     private Transform GetRandomPoint(List<Transform> points)
@@ -45,9 +53,8 @@ public class Generator : MonoBehaviour
             if (_maxCountResourseOffScene > _countResourseOnScene)
             {
                 Resource resource = Instantiate(_resource, GetRandomPoint(_resourcePoints).position, Quaternion.identity);
-                _currentResource = resource;
+                resources.Add(resource);
                 _countResourseOnScene++;
-                ResourceIsAppeared?.Invoke();
             }
 
             yield return delay;

@@ -16,8 +16,6 @@ public class Base : MonoBehaviour, IPointerClickHandler
     private bool _isUnitAtFlag = false;
     public Base NewBase = null;
 
-    public event UnityAction NewCoordinateIsAdded;
-
     public int ResourceCountForCreateBuilding { get; private set; }
 
     public int ResourseCount { get; private set; }
@@ -30,8 +28,6 @@ public class Base : MonoBehaviour, IPointerClickHandler
 
     public bool IsBuildNewBase { get; private set; }
 
-    public List<Resource> Resources = new List<Resource>();
-
     private void Start()
     {
         ResourseCount = 0;
@@ -41,7 +37,6 @@ public class Base : MonoBehaviour, IPointerClickHandler
 
     private void Awake()
     {
-        _generator.ResourceIsAppeared += AddResourceCoordinate;
         _plane.FlagIsCreated += SetStatusFlagCreated;
     }
 
@@ -58,16 +53,9 @@ public class Base : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    private void AddResourceCoordinate()
-    {
-        Resources.Add(_generator.GetCurrentResource());
-        NewCoordinateIsAdded?.Invoke();
-    }
-
     public Resource GetResource()
     {
-        Resource resource = Resources[0];
-        DeleteFirstReceivedResource();
+        Resource resource = _generator.GiveFirstListedResourceAndDeleteItFromList();
         return resource;
     }
 
@@ -82,11 +70,6 @@ public class Base : MonoBehaviour, IPointerClickHandler
         {
             return null;
         }
-    }
-
-    private void DeleteFirstReceivedResource()
-    {
-        Resources.RemoveAt(0);
     }
 
     private void OnCollisionEnter(Collision collision)

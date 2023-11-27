@@ -12,11 +12,6 @@ public class Unit : MonoBehaviour
 
     public Transform Target { get; private set; }
 
-    private void Awake()
-    {
-        _base.NewCoordinateIsAdded += Update;
-    }
-
     private void ChooseTargetBase()
     {
         Target = _base.transform;
@@ -39,14 +34,14 @@ public class Unit : MonoBehaviour
 
         if (_base.IsBuildNewBase && IsBuilder == true)
         {
-            SetBase(_base.NewBase);
             _base.SetStatusIsBuildNewBaseFalse();
+            SetBase(_base.NewBase);
             IsBuilder = false;
             Target = null;
             _isFree = true;
         }
 
-        if (_base.Resources.Count > 0 && _isFree == true)
+        if (_base.GetResource() != null && _isFree == true)  // ?????????????
         {
             _isFree = false;
             _resourceOnScene = _base.GetResource();
