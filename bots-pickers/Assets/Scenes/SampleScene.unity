@@ -1154,6 +1154,10 @@ PrefabInstance:
       value: ResourceGenerator
       objectReference: {fileID: 0}
     - target: {fileID: 7236274374877727699, guid: c7f4f773e1922eb4e823b1676d15d2af, type: 3}
+      propertyPath: _maxCountResourseOffScene
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7236274374877727699, guid: c7f4f773e1922eb4e823b1676d15d2af, type: 3}
       propertyPath: _resourcePoints.Array.data[0]
       value: 
       objectReference: {fileID: 1800612101}
