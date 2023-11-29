@@ -8,7 +8,7 @@ public class Unit : MonoBehaviour
     private bool _isFree = true;
     private Resource _resourceOnScene;
 
-    public bool IsBuilder { get; private set; }
+    public bool IsBuilder {  get; private set; }
 
     public Transform Target { get; private set; }
 
@@ -19,7 +19,7 @@ public class Unit : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, Target.position, _speed * Time.deltaTime);
         }
 
-        if (_base.GetFlagOfBuildNewBaseTransform() != null && _isFree == true && _base.HasBuilder == false && _base.FlagIsCreated == true && _base.ResourseCount >= _base.ResourceCountForCreateBuilding)
+        if (_base.GetFlagOfBuildNewBaseTransform()  != null && _isFree == true && _base.HasBuilder == false && _base.FlagIsCreated == true && _base.ResourseCount >= _base.ResourceCountForCreateBuilding)
         {
             _base.SetStatusBuilderIsTrue();
             _isFree = false;

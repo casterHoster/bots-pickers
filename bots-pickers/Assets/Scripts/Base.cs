@@ -75,11 +75,11 @@ public class Base : MonoBehaviour, IPointerClickHandler
         if (_plane.CurrentFlag != null)
         {
             return _plane.CurrentFlag.transform;
-        }
-
-        else
+        } 
+        
+        else 
         {
-            return null;
+            return null; 
         }
     }
 
