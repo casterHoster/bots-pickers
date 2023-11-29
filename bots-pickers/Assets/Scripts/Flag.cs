@@ -12,7 +12,7 @@ public class Flag : MonoBehaviour
 
     private void OnTriggerEnter(Collider collider)
     {
-        if (collider.TryGetComponent<Unit>(out Unit unit) && unit.IsBuilder == true) 
+        if (collider.TryGetComponent<Unit>(out Unit unit) && unit.IsBuilder == true)
         {
             UnitOnPointAndCanBuild.Invoke();
         }

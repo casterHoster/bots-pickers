@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class Generator : MonoBehaviour
 {
@@ -31,7 +30,7 @@ public class Generator : MonoBehaviour
             Resource resource = resources[0];
             resources.RemoveAt(0);
             return resource;
-        } 
+        }
         else
         {
             return null;

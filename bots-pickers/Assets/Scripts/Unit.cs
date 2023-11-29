@@ -12,11 +12,6 @@ public class Unit : MonoBehaviour
 
     public Transform Target { get; private set; }
 
-    private void ChooseTargetBase()
-    {
-        Target = _base.transform;
-    }
-
     private void Update()
     {
         if (Target != null)
@@ -41,24 +36,29 @@ public class Unit : MonoBehaviour
             _isFree = true;
         }
 
-        if (_base.GetResource() != null && _isFree == true)  // ?????????????
+        if (_base.CurrentResource != null && _isFree == true)
         {
             _isFree = false;
-            _resourceOnScene = _base.GetResource();
+            _resourceOnScene = _base.CurrentResource;
+            _base.SetCurrentResourceNull();
             Target = _resourceOnScene.transform;
             _resourceOnScene.Collected += ChooseTargetBase;
             _resourceOnScene.Delivered += SetFree;
         }
     }
+    public Base GetBase()
+    {
+        return _base;
+    }
+
+    private void ChooseTargetBase()
+    {
+        Target = _base.transform;
+    }
 
     private void SetFree()
     {
         _isFree = true;
-    }
-
-    public Base GetBase()
-    {
-        return _base;
     }
 
     public void SetBase(Base newBase)
