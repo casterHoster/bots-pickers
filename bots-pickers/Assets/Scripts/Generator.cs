@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class Generator : MonoBehaviour
 {
-    public event UnityAction ResourceIsAppeared;
-
     [SerializeField] private List<Transform> _resourcePoints;
     [SerializeField] private Resource _resource;
     [SerializeField] private float _delay;
