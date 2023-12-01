@@ -8,7 +8,7 @@ public class Unit : MonoBehaviour
     private bool _isFree = true;
     private Resource _resourceOnScene;
 
-    public bool IsBuilder {  get; private set; }
+    public bool IsBuilder { get; private set; }
 
     public Transform Target { get; private set; }
 
@@ -19,21 +19,12 @@ public class Unit : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, Target.position, _speed * Time.deltaTime);
         }
 
-        if (_base.GetFlagOfBuildNewBaseTransform()  != null && _isFree == true && _base.HasBuilder == false && _base.FlagIsCreated == true && _base.ResourseCount >= _base.ResourceCountForCreateBuilding)
+        if (_base.GetFlagOfBuildNewBaseTransform() != null && _isFree == true && _base.HasBuilder == false && _base.FlagIsCreated == true && _base.ResourseCount >= _base.ResourceCountForCreateBuilding)
         {
             _base.SetStatusBuilderIsTrue();
             _isFree = false;
             Target = _base.GetFlagOfBuildNewBaseTransform();
             IsBuilder = true;
-        }
-
-        if (_base.IsBuildNewBase && IsBuilder == true)
-        {
-            _base.SetStatusIsBuildNewBaseFalse();
-            SetBase(_base.NewBase);
-            IsBuilder = false;
-            Target = null;
-            _isFree = true;
         }
 
         if (_base.CurrentResource != null && _isFree == true)
@@ -46,6 +37,19 @@ public class Unit : MonoBehaviour
             _resourceOnScene.Delivered += SetFree;
         }
     }
+
+    private void OnTriggerEnter(Collider collider)
+    {
+        if (collider.TryGetComponent<Flag>(out Flag flag) && IsBuilder == true)
+        {
+            Base newBase = Instantiate(_base, transform.position, Quaternion.identity);
+            _base = newBase;
+            IsBuilder = false;
+            Target = null;
+            _isFree = true;
+        }
+    }
+
     public Base GetBase()
     {
         return _base;
