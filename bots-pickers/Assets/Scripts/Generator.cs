@@ -13,16 +13,16 @@ public class Generator : MonoBehaviour
     private List<Resource> resources;
     private void Start()
     {
-        resources = new List<Resource>();
         StartCoroutine(CreateResource());
     }
 
     private void Awake()
     {
+        resources = new List<Resource>();
         _countResourseOnScene = 0;
     }
 
-    public Resource GiveFirstListedResourceAndDeleteItFromList()
+    public Resource GiveResourceAndDeleteItFromList()
     {
         if (resources.Count > 0)
         {
