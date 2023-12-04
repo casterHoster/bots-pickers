@@ -4,6 +4,7 @@ public class Unit : MonoBehaviour
 {
     [SerializeField] public Base _base;
     [SerializeField] private float _speed;
+    [SerializeField] private BuildManager _buildManager;
 
     private bool _isFree = true;
     private Resource _resourceOnScene;
@@ -19,7 +20,7 @@ public class Unit : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, Target.position, _speed * Time.deltaTime);
         }
 
-        if (_base.GetFlagOfBuildNewBaseTransform() != null && _isFree == true && _base.HasBuilder == false && _base.FlagIsCreated == true && _base.ResourseCount >= _base.ResourceCountForCreateBuilding)
+        if (_base.GetFlagOfBuildNewBaseTransform() != null && _isFree == true && _base.HasBuilder == false && _buildManager.FlagIsCreated == true && _base.ResourseCount >= _base.ResourceCountForCreateBuilding)
         {
             _base.SetStatusBuilderIsTrue();
             _isFree = false;
@@ -68,5 +69,10 @@ public class Unit : MonoBehaviour
     public void SetBase(Base newBase)
     {
         _base = newBase;
+    }
+
+    public void SetBuildManager(BuildManager buildManager)
+    {
+        _buildManager = buildManager;
     }
 }
