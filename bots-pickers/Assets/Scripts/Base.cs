@@ -1,24 +1,21 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.EventSystems;
+using UnityEngine.Events;
 
-public class Base : MonoBehaviour, IPointerClickHandler
+public class Base : MonoBehaviour
 {
     [SerializeField] private Generator _generator;
     [SerializeField] private Unit _unit;
     [SerializeField] private Plane _plane;
+    [SerializeField] private BuildManager _buildManager;
 
     private int _resourceCountForCreateUnit = 3;
-    private bool _canBuildNewBuilding = false;
-    private bool _isUnitAtFlag = false;
+
+    public event UnityAction BuildIsCreated; 
 
     public int ResourceCountForCreateBuilding { get; private set; }
 
     public int ResourseCount { get; private set; }
-
-    public bool FlagIsCreated { get; private set; }
-
-    public bool IsChose { get; private set; }
 
     public bool HasBuilder { get; private set; }
 
@@ -29,17 +26,6 @@ public class Base : MonoBehaviour, IPointerClickHandler
         ResourseCount = 0;
         ResourceCountForCreateBuilding = 5;
         StartCoroutine(Create());
-        StartCoroutine(ProvideBuild());
-    }
-
-    private void Awake()
-    {
-        _plane.FlagIsCreated += SetStatusFlagCreated;
-    }
-
-    private void Update()
-    {
-        
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -48,6 +34,11 @@ public class Base : MonoBehaviour, IPointerClickHandler
         {
             ResourseCount++;
         }
+    }
+
+    private void Update()
+    {
+        GetResource();
     }
 
     public void GetResource()
@@ -71,11 +62,6 @@ public class Base : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        IsChose = true;
-    }
-
     public void SetStatusBuilderIsTrue()
     {
         HasBuilder = true;
@@ -90,59 +76,22 @@ public class Base : MonoBehaviour, IPointerClickHandler
     {
         while (true)
         {
-            if (_canBuildNewBuilding && ResourseCount >= ResourceCountForCreateBuilding && _isUnitAtFlag == true)
+            if (_buildManager.CanBuild && ResourseCount >= ResourceCountForCreateBuilding && _buildManager.IsUnitAtFlag)
             {
-                FlagIsCreated = false;
-                IsChose = false;
-                _plane.CurrentFlag.Destroy();
-                _canBuildNewBuilding = false;
                 ResourseCount -= ResourceCountForCreateBuilding;
                 HasBuilder = false;
-                _isUnitAtFlag = false;
+                BuildIsCreated?.Invoke();
             }
 
-            if (ResourseCount >= _resourceCountForCreateUnit && _canBuildNewBuilding == false)
+            if (ResourseCount >= _resourceCountForCreateUnit && _buildManager.CanBuild == false)
             {
                 Unit unit = Instantiate(_unit, transform.position, UnityEngine.Quaternion.identity);
                 unit.SetBase(this);
+                unit.SetBuildManager(_buildManager);
                 ResourseCount -= _resourceCountForCreateUnit;
             }
 
             yield return null;
-        }
-    }
-
-    private IEnumerator ProvideBuild()
-    {
-        while (true)
-        {
-            if (IsChose && FlagIsCreated)
-            {
-                _canBuildNewBuilding = true;
-            }
-
-            if (_plane.CurrentFlag != null)
-            {
-                _plane.CurrentFlag.UnitOnPointAndCanBuild += SetStatusIsUnitAtFlag;
-            }
-
-            GetResource();
-
-            yield return null;
-
-        }
-    }
-
-    private void SetStatusIsUnitAtFlag()
-    {
-        _isUnitAtFlag = true;
-    }
-
-    private void SetStatusFlagCreated()
-    {
-        if (IsChose)
-        {
-            FlagIsCreated = true;
         }
     }
 }
