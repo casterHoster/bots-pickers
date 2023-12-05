@@ -10,7 +10,8 @@ public class Generator : MonoBehaviour
     [SerializeField] private int _maxCountResourseOffScene;
 
     private int _countResourseOnScene;
-    private List<Resource> resources;
+    private List<Resource> _resources;
+
     private void Start()
     {
         StartCoroutine(CreateResource());
@@ -18,16 +19,16 @@ public class Generator : MonoBehaviour
 
     private void Awake()
     {
-        resources = new List<Resource>();
+        _resources = new List<Resource>();
         _countResourseOnScene = 0;
     }
 
     public Resource GiveResourceAndDeleteItFromList()
     {
-        if (resources.Count > 0)
+        if (_resources.Count > 0)
         {
-            Resource resource = resources[0];
-            resources.RemoveAt(0);
+            Resource resource = _resources[0];
+            _resources.RemoveAt(0);
             return resource;
         }
         else
@@ -51,10 +52,10 @@ public class Generator : MonoBehaviour
             if (_maxCountResourseOffScene > _countResourseOnScene)
             {
                 Resource resource = Instantiate(_resource, GetRandomPoint(_resourcePoints).position, Quaternion.identity);
-                resources.Add(resource);
+                _resources.Add(resource);
                 _countResourseOnScene++;
             }
-                
+
             yield return delay;
         }
     }

@@ -30,7 +30,7 @@ public class BuildManager : MonoBehaviour
         {
             Vector3 mousePosition = Input.mousePosition;
             Ray ray = _camera.ScreenPointToRay(mousePosition);
-            
+
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity) && hit.collider.TryGetComponent<Base>(out Base theBase))
             {
                 BaseIsChose = true;

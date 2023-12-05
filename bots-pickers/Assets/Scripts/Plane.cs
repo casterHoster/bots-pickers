@@ -4,17 +4,17 @@ using UnityEngine.EventSystems;
 
 public class Plane : MonoBehaviour, IPointerClickHandler
 {
-    public event UnityAction FlagIsCreated;
-
     [SerializeField] private Flag _flag;
 
-    public Flag CurrentFlag { get; private set; } 
+    public event UnityAction FlagIsCreated;
+
+    public Flag CurrentFlag { get; private set; }
 
     public void OnPointerClick(PointerEventData eventData)
     {
         if (CurrentFlag != null)
         {
-        CurrentFlag.Destroy();
+            CurrentFlag.Destroy();
         }
 
         Vector3 vector3 = eventData.pointerCurrentRaycast.worldPosition;
@@ -22,5 +22,5 @@ public class Plane : MonoBehaviour, IPointerClickHandler
         Flag flag = Instantiate(_flag, vector3, Quaternion.identity);
         CurrentFlag = flag;
         FlagIsCreated?.Invoke();
-    } 
+    }
 }

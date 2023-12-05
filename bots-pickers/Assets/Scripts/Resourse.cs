@@ -3,12 +3,13 @@ using UnityEngine.Events;
 
 public class Resource : MonoBehaviour
 {
-    public event UnityAction Collected;
-    public event UnityAction Delivered;
     private bool _isRaised = false;
     private Unit _unit;
 
-    public bool isDelivered { get; private set;}
+    public event UnityAction Collected;
+    public event UnityAction Delivered;
+
+    public bool isDelivered { get; private set; }
 
     private void OnCollisionEnter(Collision collision)
     {
