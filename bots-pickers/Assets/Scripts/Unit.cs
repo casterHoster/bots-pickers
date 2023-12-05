@@ -56,15 +56,6 @@ public class Unit : MonoBehaviour
         return _base;
     }
 
-    private void ChooseTargetBase()
-    {
-        Target = _base.transform;
-    }
-
-    private void SetFree()
-    {
-        _isFree = true;
-    }
 
     public void SetBase(Base newBase)
     {
@@ -74,5 +65,15 @@ public class Unit : MonoBehaviour
     public void SetBuildManager(BuildManager buildManager)
     {
         _buildManager = buildManager;
+    }
+
+    private void ChooseTargetBase()
+    {
+        Target = _base.transform;
+    }
+
+    private void SetFree()
+    {
+        _isFree = true;
     }
 }

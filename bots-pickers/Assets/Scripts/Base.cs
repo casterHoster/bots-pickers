@@ -11,7 +11,7 @@ public class Base : MonoBehaviour
 
     private int _resourceCountForCreateUnit = 3;
 
-    public event UnityAction BuildIsCreated; 
+    public event UnityAction BuildIsCreated;
 
     public int ResourceCountForCreateBuilding { get; private set; }
 
@@ -54,11 +54,11 @@ public class Base : MonoBehaviour
         if (_plane.CurrentFlag != null)
         {
             return _plane.CurrentFlag.transform;
-        } 
-        
-        else 
+        }
+
+        else
         {
-            return null; 
+            return null;
         }
     }
 
