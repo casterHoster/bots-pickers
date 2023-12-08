@@ -7,7 +7,7 @@ public class Base : MonoBehaviour
     [SerializeField] private Generator _generator;
     [SerializeField] private Unit _unit;
     [SerializeField] private Plane _plane;
-    [SerializeField] private BuildManager _buildManager;
+    [SerializeField] private Builder _buildManager;
 
     private int _resourceCountForCreateUnit = 3;
 
@@ -55,7 +55,6 @@ public class Base : MonoBehaviour
         {
             return _plane.CurrentFlag.transform;
         }
-
         else
         {
             return null;
@@ -74,7 +73,7 @@ public class Base : MonoBehaviour
 
     private IEnumerator Create()
     {
-        while (true)
+        while (enabled)
         {
             if (_buildManager.CanBuild && ResourseCount >= ResourceCountForCreateBuilding && _buildManager.IsUnitAtFlag)
             {

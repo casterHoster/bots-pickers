@@ -1,14 +1,14 @@
 using System.Collections;
 using UnityEngine;
 
-public class BuildManager : MonoBehaviour
+public class Builder : MonoBehaviour
 {
     [SerializeField] Camera _camera;
     [SerializeField] private Plane _plane;
 
-    public bool FlagIsCreated { get; private set; }
+    public bool IsFlagCreated { get; private set; }
 
-    public bool BaseIsChose { get; private set; }
+    public bool IsBaseChose { get; private set; }
 
     public bool CanBuild { get; private set; }
 
@@ -19,7 +19,7 @@ public class BuildManager : MonoBehaviour
         StartCoroutine(ProvideBuild());
     }
 
-    private void Awake()
+    private void OnEnable()
     {
         _plane.FlagIsCreated += SetFlagCreatedIfBuildChose;
     }
@@ -33,7 +33,7 @@ public class BuildManager : MonoBehaviour
 
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity) && hit.collider.TryGetComponent<Base>(out Base theBase))
             {
-                BaseIsChose = true;
+                IsBaseChose = true;
                 theBase.BuildIsCreated += SetCharacteristicsDefault;
             }
         }
@@ -41,9 +41,9 @@ public class BuildManager : MonoBehaviour
 
     private IEnumerator ProvideBuild()
     {
-        while (true)
+        while (enabled)
         {
-            if (BaseIsChose && FlagIsCreated)
+            if (IsBaseChose && IsFlagCreated)
             {
                 CanBuild = true;
             }
@@ -59,11 +59,12 @@ public class BuildManager : MonoBehaviour
 
     private void SetCharacteristicsDefault()
     {
-        FlagIsCreated = false;
-        BaseIsChose = false;
+        IsFlagCreated = false;
+        IsBaseChose = false;
         _plane.CurrentFlag.Destroy();
         CanBuild = false;
         IsUnitAtFlag = false;
+        _plane.FlagIsCreated += SetFlagCreatedIfBuildChose;
     }
 
     private void SetStatusIsUnitAtFlagTrue()
@@ -73,9 +74,10 @@ public class BuildManager : MonoBehaviour
 
     private void SetFlagCreatedIfBuildChose()
     {
-        if (BaseIsChose)
+        if (IsBaseChose)
         {
-            FlagIsCreated = true;
+            IsFlagCreated = true;
+            _plane.FlagIsCreated -= SetFlagCreatedIfBuildChose;
         }
     }
 
