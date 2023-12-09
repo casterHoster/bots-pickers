@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Unit : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class Unit : MonoBehaviour
 
     private bool _isFree = true;
     private Resource _resourceOnScene;
+    private Transform _flagOfBuildNewBaseTransform;
 
     public bool IsBuilder { get; private set; }
 
@@ -20,11 +22,13 @@ public class Unit : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, Target.position, _speed * Time.deltaTime);
         }
 
-        if (_base.GetFlagOfBuildNewBaseTransform() != null && _isFree == true && _base.HasBuilder == false && _buildManager.IsFlagCreated == true && _base.ResourseCount >= _base.ResourceCountForCreateBuilding)
+        _flagOfBuildNewBaseTransform = _base.SendUnitToBuild();
+
+        if (_isFree == true && _flagOfBuildNewBaseTransform != null)
         {
             _base.SetStatusBuilderIsTrue();
             _isFree = false;
-            Target = _base.GetFlagOfBuildNewBaseTransform();
+            Target = _flagOfBuildNewBaseTransform;
             IsBuilder = true;
         }
 
@@ -55,7 +59,6 @@ public class Unit : MonoBehaviour
     {
         return _base;
     }
-
 
     public void SetBase(Base newBase)
     {

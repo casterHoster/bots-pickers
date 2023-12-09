@@ -71,10 +71,23 @@ public class Base : MonoBehaviour
         CurrentResource = null;
     }
 
+    public Transform SendUnitToBuild()
+    {
+        if (GetFlagOfBuildNewBaseTransform() != null && HasBuilder == false && _buildManager.IsFlagCreated == true && ResourseCount >= ResourceCountForCreateBuilding)
+        {
+            return GetFlagOfBuildNewBaseTransform();
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     private IEnumerator Create()
     {
         while (enabled)
         {
+
             if (_buildManager.CanBuild && ResourseCount >= ResourceCountForCreateBuilding && _buildManager.IsUnitAtFlag)
             {
                 ResourseCount -= ResourceCountForCreateBuilding;
