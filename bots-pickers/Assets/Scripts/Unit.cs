@@ -4,10 +4,11 @@ public class Unit : MonoBehaviour
 {
     [SerializeField] public Base _base;
     [SerializeField] private float _speed;
-    [SerializeField] private BuildManager _buildManager;
+    [SerializeField] private Builder _buildManager;
 
     private bool _isFree = true;
     private Resource _resourceOnScene;
+    private Transform _flagOfBuildNewBaseTransform;
 
     public bool IsBuilder { get; private set; }
 
@@ -20,19 +21,21 @@ public class Unit : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, Target.position, _speed * Time.deltaTime);
         }
 
-        if (_base.GetFlagOfBuildNewBaseTransform() != null && _isFree == true && _base.HasBuilder == false && _buildManager.FlagIsCreated == true && _base.ResourseCount >= _base.ResourceCountForCreateBuilding)
+        _flagOfBuildNewBaseTransform = _base.SendUnitToBuild();
+
+        if (_isFree == true && _flagOfBuildNewBaseTransform != null)
         {
-            _base.SetStatusBuilderIsTrue();
+            _base.SetBuilderUnitForNewBase();
             _isFree = false;
-            Target = _base.GetFlagOfBuildNewBaseTransform();
+            Target = _flagOfBuildNewBaseTransform;
             IsBuilder = true;
         }
 
-        if (_base.CurrentResource != null && _isFree == true)
+        if (_base.TargetResource != null && _isFree == true)
         {
             _isFree = false;
-            _resourceOnScene = _base.CurrentResource;
-            _base.SetCurrentResourceNull();
+            _resourceOnScene = _base.TargetResource;
+            _base.SetLackTargetResource();
             Target = _resourceOnScene.transform;
             _resourceOnScene.Collected += ChooseTargetBase;
             _resourceOnScene.Delivered += SetFree;
@@ -56,13 +59,12 @@ public class Unit : MonoBehaviour
         return _base;
     }
 
-
     public void SetBase(Base newBase)
     {
         _base = newBase;
     }
 
-    public void SetBuildManager(BuildManager buildManager)
+    public void SetBuildManager(Builder buildManager)
     {
         _buildManager = buildManager;
     }

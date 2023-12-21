@@ -1,14 +1,14 @@
 using System.Collections;
 using UnityEngine;
 
-public class BuildManager : MonoBehaviour
+public class Builder : MonoBehaviour
 {
-    [SerializeField] Camera _camera;
+    [SerializeField] private Camera _camera;
     [SerializeField] private Plane _plane;
 
-    public bool FlagIsCreated { get; private set; }
+    public bool IsFlagCreated { get; private set; }
 
-    public bool BaseIsChose { get; private set; }
+    public bool IsBaseChose { get; private set; }
 
     public bool CanBuild { get; private set; }
 
@@ -19,7 +19,7 @@ public class BuildManager : MonoBehaviour
         StartCoroutine(ProvideBuild());
     }
 
-    private void Awake()
+    private void OnEnable()
     {
         _plane.FlagIsCreated += SetFlagCreatedIfBuildChose;
     }
@@ -33,24 +33,24 @@ public class BuildManager : MonoBehaviour
 
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity) && hit.collider.TryGetComponent<Base>(out Base theBase))
             {
-                BaseIsChose = true;
-                theBase.BuildIsCreated += SetCharacteristicsDefault;
+                IsBaseChose = true;
+                theBase.BuildingIsCreated += SetCharacteristicsDefault;
             }
         }
     }
 
     private IEnumerator ProvideBuild()
     {
-        while (true)
+        while (enabled)
         {
-            if (BaseIsChose && FlagIsCreated)
+            if (IsBaseChose && IsFlagCreated)
             {
                 CanBuild = true;
             }
 
-            if (_plane.CurrentFlag != null)
+            if (_plane.TargetFlag != null)
             {
-                _plane.CurrentFlag.UnitOnPointAndCanBuild += SetStatusIsUnitAtFlagTrue;
+                _plane.TargetFlag.UnitOnPointAndCanBuild += SetPresenceUnitAtFlag;
             }
 
             yield return null;
@@ -59,23 +59,25 @@ public class BuildManager : MonoBehaviour
 
     private void SetCharacteristicsDefault()
     {
-        FlagIsCreated = false;
-        BaseIsChose = false;
-        _plane.CurrentFlag.Destroy();
+        IsFlagCreated = false;
+        IsBaseChose = false;
+        _plane.TargetFlag.Destroy();
         CanBuild = false;
         IsUnitAtFlag = false;
+        _plane.FlagIsCreated += SetFlagCreatedIfBuildChose;
     }
 
-    private void SetStatusIsUnitAtFlagTrue()
+    private void SetPresenceUnitAtFlag()
     {
         IsUnitAtFlag = true;
     }
 
     private void SetFlagCreatedIfBuildChose()
     {
-        if (BaseIsChose)
+        if (IsBaseChose)
         {
-            FlagIsCreated = true;
+            IsFlagCreated = true;
+            _plane.FlagIsCreated -= SetFlagCreatedIfBuildChose;
         }
     }
 
