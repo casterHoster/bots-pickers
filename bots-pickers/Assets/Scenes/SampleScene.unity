@@ -1147,6 +1147,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1510719520}
     - target: {fileID: 7043969448738977199, guid: af885dcecdd90d547b579ed4939707b3, type: 3}
+      propertyPath: _buildUnit
+      value: 
+      objectReference: {fileID: 2644125746444079881, guid: 1800aad262d1338459b1d7cf233e7fd6, type: 3}
+    - target: {fileID: 7043969448738977199, guid: af885dcecdd90d547b579ed4939707b3, type: 3}
       propertyPath: _generator
       value: 
       objectReference: {fileID: 1739615222}
@@ -1214,6 +1218,10 @@ PrefabInstance:
     - target: {fileID: 6030989170119070926, guid: c7f4f773e1922eb4e823b1676d15d2af, type: 3}
       propertyPath: m_Name
       value: ResourceGenerator
+      objectReference: {fileID: 0}
+    - target: {fileID: 7236274374877727699, guid: c7f4f773e1922eb4e823b1676d15d2af, type: 3}
+      propertyPath: _maxCountResourcesOnScene
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 7236274374877727699, guid: c7f4f773e1922eb4e823b1676d15d2af, type: 3}
       propertyPath: _maxCountResourseOffScene

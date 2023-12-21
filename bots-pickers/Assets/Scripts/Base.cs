@@ -5,21 +5,21 @@ using UnityEngine.Events;
 public class Base : MonoBehaviour
 {
     [SerializeField] private Generator _generator;
-    [SerializeField] private Unit _unit;
+    [SerializeField] private Unit _buildUnit;
     [SerializeField] private Plane _plane;
     [SerializeField] private Builder _buildManager;
 
-    private int _resourceCountForCreateUnit = 3;
+    private const int _resourceCountForCreateUnit = 3;
 
-    public event UnityAction BuildIsCreated;
+    public event UnityAction BuildingIsCreated;
 
     public int ResourceCountForCreateBuilding { get; private set; }
 
     public int ResourseCount { get; private set; }
 
-    public bool HasBuilder { get; private set; }
+    public bool HasBuilderUnit { get; private set; }
 
-    public Resource CurrentResource { get; private set; }
+    public Resource TargetResource { get; private set; }
 
     private void Start()
     {
@@ -43,44 +43,40 @@ public class Base : MonoBehaviour
 
     public void GetResource()
     {
-        if (CurrentResource == null)
+        if (TargetResource == null)
         {
-            CurrentResource = _generator.GiveResourceAndDeleteItFromList();
+            TargetResource = _generator.GiveResourceAndDeleteItFromList();
         }
     }
 
-    public Transform GetFlagOfBuildNewBaseTransform()
+    public Transform GetFlagNewBase()
     {
-        if (_plane.CurrentFlag != null)
+        if (_plane.TargetFlag != null)
         {
-            return _plane.CurrentFlag.transform;
+            return _plane.TargetFlag.transform;
         }
-        else
-        {
-            return null;
-        }
+
+        return null;
     }
 
-    public void SetStatusBuilderIsTrue()
+    public void SetBuilderUnitForNewBase()
     {
-        HasBuilder = true;
+        HasBuilderUnit = true;
     }
 
-    public void SetCurrentResourceNull()
+    public void SetLackTargetResource()
     {
-        CurrentResource = null;
+        TargetResource = null;
     }
 
     public Transform SendUnitToBuild()
     {
-        if (GetFlagOfBuildNewBaseTransform() != null && HasBuilder == false && _buildManager.IsFlagCreated == true && ResourseCount >= ResourceCountForCreateBuilding)
+        if (GetFlagNewBase() != null && HasBuilderUnit == false && _buildManager.IsFlagCreated == true && ResourseCount >= ResourceCountForCreateBuilding)
         {
-            return GetFlagOfBuildNewBaseTransform();
+            return GetFlagNewBase();
         }
-        else
-        {
-            return null;
-        }
+
+        return null;
     }
 
     private IEnumerator Create()
@@ -91,13 +87,13 @@ public class Base : MonoBehaviour
             if (_buildManager.CanBuild && ResourseCount >= ResourceCountForCreateBuilding && _buildManager.IsUnitAtFlag)
             {
                 ResourseCount -= ResourceCountForCreateBuilding;
-                HasBuilder = false;
-                BuildIsCreated?.Invoke();
+                HasBuilderUnit = false;
+                BuildingIsCreated?.Invoke();
             }
 
             if (ResourseCount >= _resourceCountForCreateUnit && _buildManager.CanBuild == false)
             {
-                Unit unit = Instantiate(_unit, transform.position, UnityEngine.Quaternion.identity);
+                Unit unit = Instantiate(_buildUnit, transform.position, UnityEngine.Quaternion.identity);
                 unit.SetBase(this);
                 unit.SetBuildManager(_buildManager);
                 ResourseCount -= _resourceCountForCreateUnit;

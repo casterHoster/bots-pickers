@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Events;
 
 public class Unit : MonoBehaviour
 {
@@ -26,17 +25,17 @@ public class Unit : MonoBehaviour
 
         if (_isFree == true && _flagOfBuildNewBaseTransform != null)
         {
-            _base.SetStatusBuilderIsTrue();
+            _base.SetBuilderUnitForNewBase();
             _isFree = false;
             Target = _flagOfBuildNewBaseTransform;
             IsBuilder = true;
         }
 
-        if (_base.CurrentResource != null && _isFree == true)
+        if (_base.TargetResource != null && _isFree == true)
         {
             _isFree = false;
-            _resourceOnScene = _base.CurrentResource;
-            _base.SetCurrentResourceNull();
+            _resourceOnScene = _base.TargetResource;
+            _base.SetLackTargetResource();
             Target = _resourceOnScene.transform;
             _resourceOnScene.Collected += ChooseTargetBase;
             _resourceOnScene.Delivered += SetFree;

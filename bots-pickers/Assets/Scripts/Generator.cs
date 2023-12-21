@@ -7,7 +7,7 @@ public class Generator : MonoBehaviour
     [SerializeField] private List<Transform> _resourcePoints;
     [SerializeField] private Resource _resource;
     [SerializeField] private float _delay;
-    [SerializeField] private int _maxCountResourseOffScene;
+    [SerializeField] private int _maxCountResourcesOnScene;
 
     private int _countResourseOnScene;
     private List<Resource> _resources;
@@ -49,7 +49,7 @@ public class Generator : MonoBehaviour
 
         while (true)
         {
-            if (_maxCountResourseOffScene > _countResourseOnScene)
+            if (_maxCountResourcesOnScene > _countResourseOnScene)
             {
                 Resource resource = Instantiate(_resource, GetRandomPoint(_resourcePoints).position, Quaternion.identity);
                 _resources.Add(resource);

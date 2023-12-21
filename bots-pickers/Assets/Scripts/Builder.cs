@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Builder : MonoBehaviour
 {
-    [SerializeField] Camera _camera;
+    [SerializeField] private Camera _camera;
     [SerializeField] private Plane _plane;
 
     public bool IsFlagCreated { get; private set; }
@@ -34,7 +34,7 @@ public class Builder : MonoBehaviour
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity) && hit.collider.TryGetComponent<Base>(out Base theBase))
             {
                 IsBaseChose = true;
-                theBase.BuildIsCreated += SetCharacteristicsDefault;
+                theBase.BuildingIsCreated += SetCharacteristicsDefault;
             }
         }
     }
@@ -48,9 +48,9 @@ public class Builder : MonoBehaviour
                 CanBuild = true;
             }
 
-            if (_plane.CurrentFlag != null)
+            if (_plane.TargetFlag != null)
             {
-                _plane.CurrentFlag.UnitOnPointAndCanBuild += SetStatusIsUnitAtFlagTrue;
+                _plane.TargetFlag.UnitOnPointAndCanBuild += SetPresenceUnitAtFlag;
             }
 
             yield return null;
@@ -61,13 +61,13 @@ public class Builder : MonoBehaviour
     {
         IsFlagCreated = false;
         IsBaseChose = false;
-        _plane.CurrentFlag.Destroy();
+        _plane.TargetFlag.Destroy();
         CanBuild = false;
         IsUnitAtFlag = false;
         _plane.FlagIsCreated += SetFlagCreatedIfBuildChose;
     }
 
-    private void SetStatusIsUnitAtFlagTrue()
+    private void SetPresenceUnitAtFlag()
     {
         IsUnitAtFlag = true;
     }
